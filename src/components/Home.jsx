@@ -3,13 +3,11 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase/FirebaseConfig';
 import { useHistory } from 'react-router-dom';
 
-const Home = ({ showAlert,setUser }) => {
+const Home = ({ showAlert, setUser }) => {
 
-  const [user, error] = useAuthState(auth);
+  const [user] = useAuthState(auth);
 
   const history = useHistory()
-
-  console.log(error);
 
   const handleLogout = () => {
     auth.signOut().then(() => {
@@ -17,7 +15,7 @@ const Home = ({ showAlert,setUser }) => {
       setUser(null);
       // window.location.reload(false)
     }).catch((err) => {
-      console.log(err);
+      console.error(err);
       showAlert("Logging Out Failed!", "danger");
     })
   }

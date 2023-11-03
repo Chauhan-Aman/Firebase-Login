@@ -18,11 +18,8 @@ function App() {
   const handleFacebookLogin = () => {
     signInWithPopup(auth, providerFacebook).then((result) => {
       setUser(result.user);
-      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
       const credential = FacebookAuthProvider.credentialFromResult(result);
       const accessToken = credential.accessToken;
-      console.log("Facebook Access Token:", accessToken);
-      // fetch facebook graph api to get user actual profile picture
       fetch(`https://graph.facebook.com/${result.user.providerData[0].uid}/picture?type=large&access_token=${accessToken}`)
         .then((response) => response.blob())
         .then((blob) => {
