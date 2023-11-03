@@ -2,6 +2,7 @@ import './App.css';
 import { useState } from 'react';
 import Home from './components/Home';
 import Login from './components/Login';
+import Alert from './components/Alert';
 
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
@@ -48,17 +49,26 @@ function App() {
     })
   }
 
-  const handleLogout = () => {
-    setUser(null);
+  const [alert, setalert] = useState(null);
+
+  const showAlert = (message, type) => {
+    setalert({
+      msg: message,
+      type: type
+    })
+    setTimeout(() => {
+      setalert(null);
+    }, 2000);
   }
 
   return (
     <>
+      {alert && <Alert alert={alert} />}
       <BrowserRouter>
         <Switch>
-          <Route exact path='/home'><Home handleLogout={handleLogout} user={user} profile={profilePicture} /></Route>
-          <Route exact path='/'><Login user={user} handleFacebookLogin={handleFacebookLogin} handleGoogleLogin={handleGoogleLogin} handleGitHuBLogin={handleGitHuBLogin} /></Route>
-          <Route exact path='/modal'><Modal /></Route>
+          <Route exact path='/home'><Home setUser={setUser} user={user} profile={profilePicture} showAlert={showAlert} /></Route>
+          <Route exact path='/'><Login setUser={setUser} user={user} handleFacebookLogin={handleFacebookLogin} handleGoogleLogin={handleGoogleLogin} handleGitHuBLogin={handleGitHuBLogin} showAlert={showAlert}/></Route>
+          <Route exact path='/modal'><Modal showAlert={showAlert} /></Route>
         </Switch>
       </BrowserRouter>
     </>

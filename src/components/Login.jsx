@@ -1,19 +1,30 @@
 import React from 'react';
+import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { Link } from 'react-router-dom';
 
-const Login = ({ user, handleFacebookLogin, handleGoogleLogin, handleGitHuBLogin }) => {
+const Login = ({ user, handleFacebookLogin, handleGoogleLogin, handleGitHuBLogin, showAlert }) => {
 
     const history = useHistory();
 
+    const [register, setRegister] = useState('')
+
     if (user) {
         history.push('/home');
+        showAlert("Logged In SuccessFully!", "success");
+    }
+
+    const handleRegister = () => {
+        setRegister(true);
+        setInterval(() => {
+            setRegister(false);
+        }, 4000);
     }
 
     return (
         <>
-            <div className="container">
+            <div className="outer-container">
                 <div className="inner-container">
                     <div className='socials'>
                         <button className='login-buttons' id='google' href="#" onClick={handleGoogleLogin}>
@@ -33,13 +44,14 @@ const Login = ({ user, handleFacebookLogin, handleGoogleLogin, handleGitHuBLogin
                             Sign Up with Mobile
                         </Link>
                     </div>
-                    <button type="submit" className='button'>
+                    <button type="submit" className='button' onClick={handleRegister}>
                         Register{" "}
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className='chevron'>
                             <title>chevron-right</title>
                             <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
                         </svg>
                     </button>
+                    {register && <p style={{ color: 'red' }}>Use About Signin Methods...</p>}
                 </div>
             </div>
         </>

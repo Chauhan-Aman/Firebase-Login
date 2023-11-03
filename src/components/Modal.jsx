@@ -1,5 +1,3 @@
-// import { CgSpinner } from "react-icons/cg";
-
 import OtpInput from "otp-input-react";
 import { useState } from "react";
 import PhoneInput from "react-phone-input-2";
@@ -8,7 +6,10 @@ import { auth } from '../firebase/FirebaseConfig';
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { toast, Toaster } from "react-hot-toast";
 
-const Modal = () => {
+import { useHistory } from "react-router-dom";
+import Spinner from "./Spinner";
+
+const Modal = ({ showAlert }) => {
 
     const [otp, setOtp] = useState("");
     const [ph, setPh] = useState("");
@@ -59,7 +60,6 @@ const Modal = () => {
             window.confirmationResult
                 .confirm(otp)
                 .then(async (res) => {
-                    console.log(res);
                     setUser(res.user);
                     setLoading(false);
                 })
@@ -67,10 +67,20 @@ const Modal = () => {
                     console.error("Error during OTP verification:", err);
                     setLoading(false);
                 });
+            showAlert("Logged In SuccessFully!", "success");
         } else {
             console.error("Confirmation result is not available.");
             setLoading(false);
+            showAlert("OTP Verification Failed", "danger");
         }
+    }
+
+    const history = useHistory()
+
+    function handleLogout() {
+        setUser(null)
+        showAlert("Logged Out SuccessFully!", "success");
+        history.push('/')
     }
 
     return (
@@ -80,9 +90,15 @@ const Modal = () => {
                     <Toaster toastOptions={{ duration: 4000 }} />
                     <div id="recaptcha-container"></div>
                     {user ? (
-                        <h2 className="text-center text-white font-medium text-2xl">
-                            👍Login Success
-                        </h2>
+                        <>
+                            <h2 className="text-center text-white font-medium text-2xl">
+                                👍Login Success
+                            </h2>
+                            <button className='button'
+                                onClick={handleLogout}>
+                                LogOut
+                            </button>
+                        </>
                     ) : (
                         <div className="w-80 flex flex-col gap-4 rounded-lg p-4">
 
@@ -102,10 +118,6 @@ const Modal = () => {
                                         onClick={onOTPVerify}
                                         className="bg-emerald-600 w-full flex gap-1 items-center justify-center py-2.5 text-white rounded button-otp"
                                     >
-                                        {loading && (
-                                            // <CgSpinner size={20} className="mt-1 animate-spin" />
-                                            ''
-                                        )}
                                         <span>Verify OTP</span>
                                     </button>
                                 </>
@@ -117,10 +129,6 @@ const Modal = () => {
                                         onClick={onSignup}
                                         className="bg-emerald-600 w-full flex gap-1 items-center justify-center py-2.5 text-white rounded button-otp"
                                     >
-                                        {loading && (
-                                            // <CgSpinner size={20} className="mt-1 animate-spin" />
-                                            ''
-                                        )}
                                         <span>Send code via SMS</span>
                                     </button>
 
@@ -129,6 +137,7 @@ const Modal = () => {
                         </div>
                     )}
                 </div>
+                {(loading && <Spinner />)}
             </div>
         </section>
     )
